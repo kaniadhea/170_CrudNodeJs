@@ -1,64 +1,65 @@
 const express = require('express');
 const router = express.Router();
 
+// Membuat objek data mahasiswa dengan atribut NIM, Nama, Angkatan, Kelas, dan Alamat
 let todos = [
-    { id: 1, task: "Belajar Node.Js", completed: false, description: "Belajar dasar Node.js", dueDate: "2024-10-30" },
-    { id: 2, task: "Membuat API", completed: false, description: "Membuat API dengan Express", dueDate: "2024-11-05" },
-    { id: 3, task: "Belajar PAW", completed: false, description: "mempelajari cara membuat website", dueDate: "2024-12-15" }, // Objek baru dengan 4 atribut
+    { NIM: "20220140170", Nama: "Dhea Kania", Angkatan: 2022, Kelas: "TI-D", Alamat: "Subang, Jawa Barat" },
+    { NIM: "20220140176", Nama: "Laluna Riska", Angkatan: 2022, Kelas: "TI-D", Alamat: "Mukomuko, Bengkulu" },
+    { NIM: "20220140179", Nama: "Dina Amalia", Angkatan: 2022, Kelas: "TI-D", Alamat: "Kebumen, Jawa Tengah" },
 ];
 
-
+// Mendapatkan semua data mahasiswa
 router.get('/', (req, res) => {
     res.json(todos);
 });
 
-
+// Menambahkan data mahasiswa baru
 router.post('/', (req, res) => {
-    const { task, description, dueDate } = req.body;
+    const { NIM, Nama, Angkatan, Kelas, Alamat } = req.body;
 
-    const newTodo = {
-        id: todos.length + 1,
-        task: task,
-        completed: false,
-        description: description,
-        dueDate: dueDate
+    const newStudent = {
+        NIM: NIM,
+        Nama: Nama,
+        Angkatan: Angkatan,
+        Kelas: Kelas,
+        Alamat: Alamat
     };
 
-    todos.push(newTodo);
-    res.status(201).json(newTodo);
+    todos.push(newStudent);
+    res.status(201).json(newStudent);
 });
 
-// Endpoint untuk mengupdate todo berdasarkan ID
-router.put('/:id', (req, res) => {
-    const todoId = parseInt(req.params.id);
-    const { task, completed, description, dueDate } = req.body;
+// Mengupdate data mahasiswa berdasarkan NIM
+router.put('/:NIM', (req, res) => {
+    const studentNIM = req.params.NIM;
+    const { Nama, Angkatan, Kelas, Alamat } = req.body;
 
-    const todoIndex = todos.findIndex(todo => todo.id === todoId);
+    const studentIndex = todos.findIndex(student => student.NIM === studentNIM);
 
-    if (todoIndex !== -1) {
-        todos[todoIndex] = {
-            ...todos[todoIndex],
-            task: task !== undefined ? task : todos[todoIndex].task,
-            completed: completed !== undefined ? completed : todos[todoIndex].completed,
-            description: description !== undefined ? description : todos[todoIndex].description,
-            dueDate: dueDate !== undefined ? dueDate : todos[todoIndex].dueDate
+    if (studentIndex !== -1) {
+        todos[studentIndex] = {
+            ...todos[studentIndex],
+            Nama: Nama !== undefined ? Nama : todos[studentIndex].Nama,
+            Angkatan: Angkatan !== undefined ? Angkatan : todos[studentIndex].Angkatan,
+            Kelas: Kelas !== undefined ? Kelas : todos[studentIndex].Kelas,
+            Alamat: Alamat !== undefined ? Alamat : todos[studentIndex].Alamat
         };
-        res.json(todos[todoIndex]);
+        res.json({ message: 'Data mahasiswa berhasil diperbarui', student: todos[studentIndex] });
     } else {
-        res.status(404).json({ message: 'Todo not found' });
+        res.status(404).json({ message: 'Mahasiswa dengan NIM tersebut tidak ditemukan' });
     }
 });
 
+// Menghapus data mahasiswa berdasarkan NIM
+router.delete('/:NIM', (req, res) => {
+    const studentNIM = req.params.NIM;
+    const studentIndex = todos.findIndex(student => student.NIM === studentNIM);
 
-router.delete('/:id', (req, res) => {
-    const todoId = parseInt(req.params.id);
-    const todoIndex = todos.findIndex(todo => todo.id === todoId);
-
-    if (todoIndex !== -1) {
-        const deletedTodo = todos.splice(todoIndex, 1);
-        res.json(deletedTodo[0]);
+    if (studentIndex !== -1) {
+        const deletedStudent = todos.splice(studentIndex, 1);
+        res.json({ message: 'Data mahasiswa berhasil dihapus', student: deletedStudent[0] });
     } else {
-        res.status(404).json({ message: 'Todo not found' });
+        res.status(404).json({ message: 'Mahasiswa dengan NIM tersebut tidak ditemukan' });
     }
 });
 
